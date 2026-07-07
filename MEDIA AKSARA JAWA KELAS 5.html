@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belajar Aksara Jawa</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    .javanese { font-family: 'Noto Sans Javanese', sans-serif; font-weight: 400; }
+    .app-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+    .tab-active { background: #1e3a5f; color: white; }
+    .tab-inactive { background: #e2e8f0; color: #334155; }
+    .card-glow { box-shadow: 0 4px 20px rgba(30,58,95,0.12); }
+    .canvas-area { touch-action: none; cursor: crosshair; }
+    .drag-item { cursor: grab; user-select: none; }
+    .drop-zone { width: 15px; height: 20px; border: 2px dashed #94a3b8; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; padding: 0; margin: 0 1px; }
+    .drop-zone.filled { border-color: #1e3a5f; background: #e8f0fe; }
+    .drop-zone.correct { border-color: #16a34a; background: #dcfce7; }
+    .drop-zone.incorrect { border-color: #dc2626; background: #fee2e2; }
+    .feedback-correct { color: #16a34a; font-weight: 600; }
+    .feedback-incorrect { color: #dc2626; font-weight: 600; }
+    .aksara-card:hover { transform: translateY(-2px); transition: transform 0.2s; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes bounceIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+    .animate-bounce-in { animation: bounceIn 0.3s ease forwards; }
+    @keyframes floatAksara { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    .aksara-float { animation: floatAksara 3s ease-in-out infinite; }
+    @keyframes rotateAksara { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .aksara-spin { animation: rotateAksara 2s linear infinite; }
+    @keyframes shimmerGold { 0%, 100% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+    .shimmer-gold { background: linear-gradient(90deg, #c9702e 0%, #f5d547 50%, #c9702e 100%); background-size: 1000px 100%; animation: shimmerGold 2s infinite; }
+    @keyframes pulseCorrect { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .pulse-correct { animation: pulseCorrect 0.6s ease-in-out; }
+    @keyframes wiggleNo { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    .wiggle-no { animation: wiggleNo 0.4s ease-in-out; }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    .slide-in-left { animation: slideInLeft 0.5s ease-out; }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    .slide-in-right { animation: slideInRight 0.5s ease-out; }
+    @keyframes jackInTheBox { 0% { opacity: 0; transform: scale(0.1) rotate(-45deg); } 50% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+    .jack-in-box { animation: jackInTheBox 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    @keyframes rubberBand { 0% { transform: scaleX(1); } 15% { transform: scaleX(1.25) scaleY(0.75); } 30% { transform: scaleX(0.75) scaleY(1.25); } 45% { transform: scaleX(1.15) scaleY(0.85); } 60% { transform: scaleX(0.95) scaleY(1.05); } 75% { transform: scaleX(1.05) scaleY(0.95); } 100% { transform: scaleX(1) scaleY(1); } }
+    .rubber-band { animation: rubberBand 0.8s ease-in-out; }
+    @keyframes heartBeat { 0% { transform: scale(1); } 14% { transform: scale(1.3); } 28% { transform: scale(1); } 42% { transform: scale(1.3); } 70% { transform: scale(1); } }
+    .heart-beat { animation: heartBeat 1.3s ease-in-out infinite; }
+    @keyframes fadeInScale { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+    .fade-in-scale { animation: fadeInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes rollIn { from { opacity: 0; transform: translateX(-100%) rotate(-120deg); } to { opacity: 1; transform: translateX(0) rotate(0deg); } }
+    .roll-in { animation: rollIn 0.6s ease-out; }
+    .stagger-item { opacity: 0; animation: fadeIn 0.4s ease forwards; }
+    .stagger-item:nth-child(1) { animation-delay: 0.1s; }
+    .stagger-item:nth-child(2) { animation-delay: 0.2s; }
+    .stagger-item:nth-child(3) { animation-delay: 0.3s; }
+    .stagger-item:nth-child(4) { animation-delay: 0.4s; }
+    .stagger-item:nth-child(5) { animation-delay: 0.5s; }
+    @keyframes charBounce { 0%, 100% { transform: translateY(0) rotate(-2deg); } 25% { transform: translateY(-15px) rotate(2deg); } 50% { transform: translateY(-20px) rotate(-1deg); } 75% { transform: translateY(-10px) rotate(1deg); } }
+    .char-bounce { animation: charBounce 2s ease-in-out infinite; }
+    @keyframes charWave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+    .char-wave { animation: charWave 1.5s ease-in-out infinite; transform-origin: 70% 20%; }
+    @keyframes charBlink { 0%, 49%, 100% { opacity: 1; } 50%, 99% { opacity: 0.3; } }
+    .char-blink { animation: charBlink 3s ease-in-out infinite; }
+    @keyframes charDance { 0%, 100% { transform: translateX(0) rotateZ(-3deg); } 25% { transform: translateX(-8px) rotateZ(3deg); } 75% { transform: translateX(8px) rotateZ(-3deg); } }
+    .char-dance { animation: charDance 1.8s ease-in-out infinite; }
+    .mascot-container { position: fixed; bottom: 20px; right: 20px; z-index: 40; }
+    .mascot { font-size: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); user-select: none; }
+    @keyframes slideInFromBottom { from { opacity: 0; transform: translateY(100px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-in-from-bottom { animation: slideInFromBottom 0.5s ease-out; }
+    @keyframes wiggleTail { 0%, 100% { transform: rotateZ(-5deg); } 50% { transform: rotateZ(5deg); } }
+    .wiggle-tail { animation: wiggleTail 1s ease-in-out infinite; transform-origin: center top; }
+  </style>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { navy: '#2c1810', navyLight: '#4a2c1f', cream: '#f5ead8', gold: '#c9702e', goldLight: '#e8d5c4', batik: '#6b4423', javaBrown: '#8b5a2b', javaGreen: '#4a7c59', javaGold: '#d4a574' } } } }
+  </script>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-cream app-font">
+  <div id="app" class="h-full w-full overflow-auto">
+   <div class="mascot-container slide-in-from-bottom">
+    <div class="mascot char-bounce" id="mascot" title="Semangat belajar!">
+     🦜
+    </div>
+    <div class="text-center text-xs font-600 text-navy mt-1" id="mascot-message" style="display:none;"></div>
+   </div>
+   <header class="bg-navy text-white py-5 px-4 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,0.1) 35px, rgba(255,255,255,0.1) 70px);"></div>
+    <h1 id="app-title" class="text-2xl md:text-3xl font-800 relative z-10 javanese tracking-wide">ꦧꦼꦭꦗꦂ ꦲꦏ꧀ꦱꦫ ꦗꦮ</h1>
+    <p class="text-sm md:text-base mt-1 opacity-80 relative z-10 javanese">ꦧꦼꦭꦗꦂ ꦲꦏ꧀ꦱꦫ ꦗꦮ</p>
+   </header>
+   <main class="max-w-4xl mx-auto p-4 pb-12">
+    <section id="section-home" class="fade-in">
+     <div class="text-center mb-8">
+      <div class="text-7xl mb-4 animate-bounce">
+       🦜
+      </div>
+      <h2 class="text-3xl font-800 text-navy mb-3 javanese">ꦧꦼꦭꦗꦂ ꦲꦏ꧀ꦱꦫ ꦗꦮ</h2>
+      <p class="text-slate-600 text-lg mb-2">Selamat datang di dunia aksara Jawa yang indah!</p>
+      <p class="text-slate-500">Pilih salah satu menu di bawah untuk memulai perjalanan belajarmu</p>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="bg-gradient-to-br from-amber-100 via-orange-100 to-yellow-100 rounded-3xl p-8 text-center cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 stagger-item border border-amber-200/50" onclick="switchTab('materi')">
+       <div class="text-6xl mb-4">
+        🔤
+       </div>
+       <h3 class="text-2xl font-800 text-amber-900 mb-2">Aksara Jawa</h3>
+       <p class="text-amber-800/80 font-500">Pelajari 20 aksara dasar Jawa dengan mudah dan menyenangkan</p>
+      </div>
+      <div class="bg-gradient-to-br from-sky-100 via-cyan-100 to-blue-100 rounded-3xl p-8 text-center cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 stagger-item border border-sky-200/50" onclick="switchTab('pasangan')">
+       <div class="text-6xl mb-4">
+        ⛓️
+       </div>
+       <h3 class="text-2xl font-800 text-sky-900 mb-2">Aksara Pasangan</h3>
+       <p class="text-sky-800/80 font-500">Kuasai aksara pasangan untuk menulis konsonan berdampingan</p>
+      </div>
+      <div class="bg-gradient-to-br from-rose-100 via-pink-100 to-red-100 rounded-3xl p-8 text-center cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 stagger-item border border-rose-200/50" onclick="switchTab('sandhangan')">
+       <div class="text-6xl mb-4">
+        ✨
+       </div>
+       <h3 class="text-2xl font-800 text-rose-900 mb-2">Sandhangan</h3>
+       <p class="text-rose-800/80 font-500">Pahami sandhangan swara, panyigeg wanda, dan wyanjana</p>
+      </div>
+      <div class="bg-gradient-to-br from-emerald-100 via-teal-100 to-green-100 rounded-3xl p-8 text-center cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 stagger-item border border-emerald-200/50" onclick="switchTab('kuis')">
+       <div class="text-6xl mb-4">
+        🎯
+       </div>
+       <h3 class="text-2xl font-800 text-emerald-900 mb-2">Kuis Seru</h3>
+       <p class="text-emerald-800/80 font-500">Uji kemampuanmu dengan isi rumpang dan cocokkan aksara</p>
+      </div>
+      <div class="bg-gradient-to-br from-violet-100 via-purple-100 to-indigo-100 rounded-3xl p-8 text-center cursor-pointer hover:shadow-2xl transition-all transform hover:scale-105 md:col-span-2 stagger-item border border-violet-200/50" onclick="switchTab('menulis')">
+       <div class="text-6xl mb-4">
+        🖊️
+       </div>
+       <h3 class="text-2xl font-800 text-violet-900 mb-2">Latihan Menulis</h3>
+       <p class="text-violet-800/80 font-500">Praktikkan menulis aksara Jawa dengan media kuas digital</p>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl p-8 card-glow">
+      <h3 class="text-2xl font-800 text-navy mb-4">📚 Tips Belajar Sukses</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="flex gap-3">
+        <div class="text-4xl">
+         1️⃣
+        </div>
+        <div>
+         <p class="font-700 text-navy mb-1">Mulai dari Dasar</p>
+         <p class="text-sm text-slate-600">Pelajari aksara Jawa carakan terlebih dahulu sebelum lanjut ke materi lainnya</p>
+        </div>
+       </div>
+       <div class="flex gap-3">
+        <div class="text-4xl">
+         2️⃣
+        </div>
+        <div>
+         <p class="font-700 text-navy mb-1">Berulang-ulang</p>
+         <p class="text-sm text-slate-600">Praktikkan dengan kuis dan latihan menulis agar semakin mahir</p>
+        </div>
+       </div>
+       <div class="flex gap-3">
+        <div class="text-4xl">
+         3️⃣
+        </div>
+        <div>
+         <p class="font-700 text-navy mb-1">Jangan Malu Salah</p>
+         <p class="text-sm text-slate-600">Setiap kesalahan adalah langkah menuju kesempurnaan. Tetap semangat!</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="section-materi" class="hidden fade-in">
+     <div class="mb-4"><button onclick="switchTab('home')" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Kembali ke Beranda</button>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow">
+      <h2 class="text-xl font-700 text-navy mb-4">Aksara Jawa Carakan (Hanacaraka)</h2>
+      <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
+       <p class="text-sm font-600 text-blue-900 mb-2">📜 Urutan Hanacaraka:</p>
+       <p class="text-base font-700 javanese text-navy mb-3">ꦲꦤ ꦕꦫꦏ ꦢꦠ ꦱꦮꦭ ꦥꦢ ꦗꦪꦚ ꦩꦒ ꦧꦠꦁ</p>
+       <p class="text-xs text-blue-700 italic">"Hana caraka, data sawala, padha jayanya, maga bathanga"</p>
+       <p class="text-xs text-blue-600 mt-2">(Ada dua utusan, saling bertengkar, sama kuatnya, sama-sama mati)</p>
+      </div>
+      <div id="aksara-grid" class="grid grid-cols-4 sm:grid-cols-5 gap-3"></div>
+     </div>
+    </section>
+    <section id="section-pasangan" class="hidden fade-in">
+     <div class="mb-4"><button onclick="switchTab('home')" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Kembali ke Beranda</button>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow">
+      <h2 class="text-xl font-700 text-navy mb-4">Aksara Pasangan</h2>
+      <div id="pasangan-grid" class="grid grid-cols-4 sm:grid-cols-5 gap-3"></div>
+     </div>
+    </section>
+    <section id="section-sandhangan" class="hidden fade-in">
+     <div class="mb-4"><button onclick="switchTab('home')" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Kembali ke Beranda</button>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow mb-6">
+      <h2 class="text-xl font-700 text-navy mb-3">🎵 Sandhangan Swara (Sandhangan Lepat)</h2>
+      <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
+       <p class="text-slate-700 font-600 mb-2">Apa itu Sandhangan Swara?</p>
+       <p class="text-slate-600 text-sm mb-3">Sandhangan swara yaiku sandhangan sing digunakake kanggo ngowahi swara aksara Jawa. Aksara Jawa nduweni swara baku "a", banjur sandhangan swara digunakake kanggo ngganti swara kasebut dadi i, u, ê, é, utawa o.</p>
+      </div>
+      <div id="swara-grid" class="space-y-4"></div>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow mb-6">
+      <h2 class="text-xl font-700 text-navy mb-3">🔒 Panyigeg Wanda (Penutup Suku Kata)</h2>
+      <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 mb-6">
+       <p class="text-slate-700 font-600 mb-2">Apa itu Panyigeg Wanda?</p>
+       <p class="text-slate-600 text-sm mb-3">Sandhangan panyigeging wanda yaiku sandhangan sing digunakake kanggo nutup wanda utawa menehi tandha yen sawijining wanda dipungkasi nganggo konsonan tartamtu.</p>
+      </div>
+      <div id="panyigeg-grid" class="space-y-4"></div>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow">
+      <h2 class="text-xl font-700 text-navy mb-3">⚡ Sandhangan Wyanjana</h2>
+      <div class="bg-purple-50 border-l-4 border-purple-500 rounded-lg p-4 mb-6">
+       <p class="text-slate-700 font-600 mb-2">Apa itu Sandhangan Wyanjana?</p>
+       <p class="text-slate-600 text-sm mb-3">Sandhangan wyanjana yaiku sandhangan sing digunakake kanggo nambah swara konsonan ing sawijining aksara Jawa.</p>
+      </div>
+      <div id="wyanjana-grid" class="space-y-4"></div>
+     </div>
+    </section>
+    <section id="section-kuis" class="hidden fade-in">
+     <div class="mb-4"><button onclick="switchTab('home')" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Kembali ke Beranda</button>
+     </div>
+     <div id="kuis-menu" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-8 text-center cursor-pointer hover:shadow-lg transition transform hover:scale-105" onclick="startRumpangKuis()">
+       <div class="text-5xl mb-4">
+        ✏️
+       </div>
+       <h3 class="text-2xl font-700 text-navy mb-2">Isi Rumpang</h3>
+       <p class="text-slate-600">Isi bagian kosong dengan aksara yang tepat</p>
+      </div>
+      <div class="bg-green-50 border-2 border-green-400 rounded-2xl p-8 text-center cursor-pointer hover:shadow-lg transition transform hover:scale-105" onclick="startCocokkanKuis()">
+       <div class="text-5xl mb-4">
+        🔗
+       </div>
+       <h3 class="text-2xl font-700 text-navy mb-2">Cocokkan Aksara</h3>
+       <p class="text-slate-600">Tarik garis untuk mencocokkan aksara Jawa dan Latin</p>
+      </div>
+     </div>
+     <div id="kuis-rumpang-content" class="hidden bg-white rounded-2xl p-6 card-glow">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-xl font-700 text-navy">Isi Rumpang</h2><button onclick="backToKuisMenu()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition">← Kembali</button>
+      </div>
+      <p class="text-slate-600 mb-4">Pilih jawaban yang tepat untuk mengisi bagian yang kosong.</p>
+      <div id="rumpang-questions" class="space-y-6"></div>
+      <div id="rumpang-score" class="mt-6 text-center text-lg font-700 text-navy min-h-[32px]"></div>
+      <div class="text-center mt-6 flex justify-center gap-3 flex-wrap"><button id="rumpang-submit-btn" onclick="submitRumpang()" class="bg-gold hover:bg-amber-500 text-white px-8 py-3 rounded-full font-700 transition flex items-center gap-2"><i data-lucide="check" style="width:20px;height:20px;"></i> Submit Jawaban</button><button id="rumpang-retry-btn" onclick="resetRumpang()" class="hidden bg-navy text-white px-5 py-2 rounded-full font-600 hover:bg-navyLight transition">🔄 Ulangi</button>
+      </div>
+     </div>
+     <div id="kuis-cocokkan-content" class="hidden bg-white rounded-2xl p-6 card-glow">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-xl font-700 text-navy">Cocokkan Aksara</h2><button onclick="backToKuisMenu()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition">← Kembali</button>
+      </div>
+      <p class="text-slate-600 mb-4">Klik aksara Jawa, lalu klik tulisan Latin yang sesuai.</p>
+      <div id="cocokkan-container" class="bg-cream rounded-xl p-6 min-h-[500px] relative overflow-hidden">
+       <svg id="cocokkan-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></svg>
+       <div class="flex justify-between items-start gap-8 relative z-10">
+        <div id="cocokkan-jawa" class="flex-1"></div>
+        <div id="cocokkan-latin" class="flex-1"></div>
+       </div>
+      </div>
+      <div id="cocokkan-score" class="mt-6 text-center text-lg font-700 text-navy min-h-[32px]"></div>
+      <div class="text-center mt-6 flex justify-center gap-3 flex-wrap"><button id="cocokkan-submit-btn" onclick="submitCocokkan()" class="bg-gold hover:bg-amber-500 text-white px-8 py-3 rounded-full font-700 transition flex items-center gap-2"><i data-lucide="check" style="width:20px;height:20px;"></i> Submit Jawaban</button><button id="cocokkan-retry-btn" onclick="resetCocokkan()" class="hidden bg-navy text-white px-5 py-2 rounded-full font-600 hover:bg-navyLight transition">🔄 Ulangi</button>
+      </div>
+     </div>
+    </section>
+    <section id="section-menulis" class="hidden fade-in">
+     <div class="mb-4"><button onclick="switchTab('home')" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-full font-600 transition"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Kembali ke Beranda</button>
+     </div>
+     <div class="bg-white rounded-2xl p-6 card-glow">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-xl font-700 text-navy javanese">ꦊꦠꦶꦂꦤ ꦚꦸꦤꦴꦭ꧀ꦲꦶ ꦲꦏ꧀ꦱꦫ ꦗꦮ</h2>
+       <div class="text-right">
+        <p class="text-sm font-600 text-slate-600">Soal <span id="soal-ke">1</span> / ∞</p>
+        <p class="text-xs text-slate-500 mt-1">Latihan tanpa batas</p>
+       </div>
+      </div>
+      <p class="text-slate-600 mb-6">Tulislah aksara Jawa dari kata Latin yang diberikan.</p>
+      <div class="bg-goldLight border-2 border-gold rounded-xl p-4 text-center mb-6">
+       <p class="text-sm text-slate-600 mb-2">Tulis aksara Jawa untuk:</p>
+       <p class="text-3xl font-700 text-navy" id="prompt-word">bapa</p>
+      </div>
+      <div class="border-2 border-slate-300 rounded-xl overflow-hidden mb-4 bg-white">
+       <canvas id="write-canvas" class="canvas-area w-full" height="250"></canvas>
+      </div>
+      <div class="flex flex-wrap gap-2 justify-center mb-4"><button onclick="clearCanvas()" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-full font-600 hover:bg-slate-300 transition flex items-center gap-2"><i data-lucide="trash-2" style="width:18px;height:18px;"></i> Hapus</button><button onclick="showAnswer()" class="bg-gold text-white px-4 py-2 rounded-full font-600 hover:bg-amber-500 transition flex items-center gap-2"><i data-lucide="eye" style="width:18px;height:18px;"></i> Lihat Jawaban</button>
+      </div>
+      <div id="answer-reveal" class="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 mb-4 text-center hidden">
+       <p class="text-sm font-600 text-blue-700 mb-2">Jawaban yang benar:</p>
+       <p class="javanese text-4xl text-navy" id="answer-aksara"></p>
+      </div>
+      <div class="flex gap-2 justify-center"><button onclick="nextWritingPrompt()" class="bg-navy text-white px-6 py-3 rounded-full font-700 hover:bg-navyLight transition flex items-center gap-2 text-lg">Soal Berikutnya <i data-lucide="arrow-right" style="width:20px;height:20px;"></i></button>
+      </div>
+     </div>
+    </section>
+   </main>
+   <div id="aksara-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto" onclick="if(event.target.id==='aksara-modal') closeAksaraModal()">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full card-glow animate-bounce-in my-8" onclick="event.stopPropagation()"><button onclick="closeAksaraModal()" class="float-right text-slate-400 hover:text-slate-600 text-2xl">✕</button>
+     <div class="text-center">
+      <div class="javanese text-7xl text-navy mb-2" id="modal-jawa"></div>
+      <p class="text-lg font-700 text-navy mb-4" id="modal-name"></p>
+      <p class="text-slate-500 text-sm mb-1">Dibaca:</p>
+      <p class="text-2xl font-800 text-navy mb-6" id="modal-latin"></p><button onclick="playAksaraSound()" class="bg-gold hover:bg-amber-500 text-white px-6 py-3 rounded-full font-700 transition flex items-center justify-center gap-2 w-full mb-6"><i data-lucide="volume-2" style="width:20px;height:20px;"></i> 🔊 Dengarkan</button>
+      <div class="border-t pt-4 mb-4">
+       <p class="text-sm font-600 text-slate-600 mb-2">Pasangan: <span class="javanese text-lg text-gold" id="modal-pasangan"></span></p>
+      </div>
+      <div class="bg-blue-50 rounded-lg p-4 text-left border border-blue-200">
+       <p class="text-sm font-700 text-blue-900 mb-3">Contoh Sandhangan:</p>
+       <div id="modal-sandhangan-examples" class="space-y-2"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+const aksaraData = [
+  {latin:'ha',jawa:'ꦲ',pasangan:'꧀ꦲ',nama:'Aksara Ha',examples:[{sandhi:'ꦲꦶ',baca:'hi'},{sandhi:'ꦲꦸ',baca:'hu'},{sandhi:'ꦲꦼ',baca:'hê'},{sandhi:'ꦺꦲ',baca:'hé'},{sandhi:'ꦺꦲꦴ',baca:'ho'}]},
+  {latin:'na',jawa:'ꦤ',pasangan:'꧀ꦤ',nama:'Aksara Na',examples:[{sandhi:'ꦤꦶ',baca:'ni'},{sandhi:'ꦤꦸ',baca:'nu'},{sandhi:'ꦤꦼ',baca:'nê'},{sandhi:'ꦺꦤ',baca:'né'},{sandhi:'ꦺꦤꦴ',baca:'no'}]},
+  {latin:'ca',jawa:'ꦕ',pasangan:'꧀ꦕ',nama:'Aksara Ca',examples:[{sandhi:'ꦕꦶ',baca:'ci'},{sandhi:'ꦕꦸ',baca:'cu'},{sandhi:'ꦕꦼ',baca:'cê'},{sandhi:'ꦺꦕ',baca:'cé'},{sandhi:'ꦺꦕꦴ',baca:'co'}]},
+  {latin:'ra',jawa:'ꦫ',pasangan:'꧀ꦫ',nama:'Aksara Ra',examples:[{sandhi:'ꦫꦶ',baca:'ri'},{sandhi:'ꦫꦸ',baca:'ru'},{sandhi:'ꦫꦼ',baca:'rê'},{sandhi:'ꦺꦫ',baca:'ré'},{sandhi:'ꦺꦫꦴ',baca:'ro'}]},
+  {latin:'ka',jawa:'ꦏ',pasangan:'꧀ꦏ',nama:'Aksara Ka',examples:[{sandhi:'ꦏꦶ',baca:'ki'},{sandhi:'ꦏꦸ',baca:'ku'},{sandhi:'ꦏꦼ',baca:'kê'},{sandhi:'ꦺꦏ',baca:'ké'},{sandhi:'ꦺꦏꦴ',baca:'ko'}]},
+  {latin:'da',jawa:'ꦢ',pasangan:'꧀ꦢ',nama:'Aksara Da',examples:[{sandhi:'ꦢꦶ',baca:'di'},{sandhi:'ꦢꦸ',baca:'du'},{sandhi:'ꦢꦼ',baca:'dê'},{sandhi:'ꦺꦢ',baca:'dé'},{sandhi:'ꦺꦢꦴ',baca:'do'}]},
+  {latin:'ta',jawa:'ꦠ',pasangan:'꧀ꦠ',nama:'Aksara Ta',examples:[{sandhi:'ꦠꦶ',baca:'ti'},{sandhi:'ꦠꦸ',baca:'tu'},{sandhi:'ꦠꦼ',baca:'tê'},{sandhi:'ꦺꦠ',baca:'té'},{sandhi:'ꦺꦠꦴ',baca:'to'}]},
+  {latin:'sa',jawa:'ꦱ',pasangan:'꧀ꦱ',nama:'Aksara Sa',examples:[{sandhi:'ꦱꦶ',baca:'si'},{sandhi:'ꦱꦸ',baca:'su'},{sandhi:'ꦱꦼ',baca:'sê'},{sandhi:'ꦺꦱ',baca:'sé'},{sandhi:'ꦺꦱꦴ',baca:'so'}]},
+  {latin:'wa',jawa:'ꦮ',pasangan:'꧀ꦮ',nama:'Aksara Wa',examples:[{sandhi:'ꦮꦶ',baca:'wi'},{sandhi:'ꦮꦸ',baca:'wu'},{sandhi:'ꦮꦼ',baca:'wê'},{sandhi:'ꦺꦮ',baca:'wé'},{sandhi:'ꦺꦮꦴ',baca:'wo'}]},
+  {latin:'la',jawa:'ꦭ',pasangan:'꧀ꦭ',nama:'Aksara La',examples:[{sandhi:'ꦭꦶ',baca:'li'},{sandhi:'ꦭꦸ',baca:'lu'},{sandhi:'ꦭꦼ',baca:'lê'},{sandhi:'ꦺꦭ',baca:'lé'},{sandhi:'ꦺꦭꦴ',baca:'lo'}]},
+  {latin:'pa',jawa:'ꦥ',pasangan:'꧀ꦥ',nama:'Aksara Pa',examples:[{sandhi:'ꦥꦶ',baca:'pi'},{sandhi:'ꦥꦸ',baca:'pu'},{sandhi:'ꦥꦼ',baca:'pê'},{sandhi:'ꦺꦥ',baca:'pé'},{sandhi:'ꦺꦥꦴ',baca:'po'}]},
+  {latin:'dha',jawa:'ꦝ',pasangan:'꧀ꦝ',nama:'Aksara Dha',examples:[{sandhi:'ꦝꦶ',baca:'dhi'},{sandhi:'ꦝꦸ',baca:'dhu'},{sandhi:'ꦝꦼ',baca:'dhê'},{sandhi:'ꦺꦝ',baca:'dhé'},{sandhi:'ꦺꦝꦴ',baca:'dho'}]},
+  {latin:'ja',jawa:'ꦗ',pasangan:'꧀ꦗ',nama:'Aksara Ja',examples:[{sandhi:'ꦗꦶ',baca:'ji'},{sandhi:'ꦗꦸ',baca:'ju'},{sandhi:'ꦗꦼ',baca:'jê'},{sandhi:'ꦺꦗ',baca:'jé'},{sandhi:'ꦺꦗꦴ',baca:'jo'}]},
+  {latin:'ya',jawa:'ꦪ',pasangan:'꧀ꦪ',nama:'Aksara Ya',examples:[{sandhi:'ꦪꦶ',baca:'yi'},{sandhi:'ꦪꦸ',baca:'yu'},{sandhi:'ꦪꦼ',baca:'yê'},{sandhi:'ꦺꦪ',baca:'yé'},{sandhi:'ꦺꦪꦴ',baca:'yo'}]},
+  {latin:'nya',jawa:'ꦚ',pasangan:'꧀ꦚ',nama:'Aksara Nya',examples:[{sandhi:'ꦚꦶ',baca:'nyi'},{sandhi:'ꦚꦸ',baca:'nyu'},{sandhi:'ꦚꦼ',baca:'nyê'},{sandhi:'ꦺꦚ',baca:'nyé'},{sandhi:'ꦺꦚꦴ',baca:'nyo'}]},
+  {latin:'ma',jawa:'ꦩ',pasangan:'꧀ꦩ',nama:'Aksara Ma',examples:[{sandhi:'ꦩꦶ',baca:'mi'},{sandhi:'ꦩꦸ',baca:'mu'},{sandhi:'ꦩꦼ',baca:'mê'},{sandhi:'ꦺꦩ',baca:'mé'},{sandhi:'ꦺꦩꦴ',baca:'mo'}]},
+  {latin:'ga',jawa:'ꦒ',pasangan:'꧀ꦒ',nama:'Aksara Ga',examples:[{sandhi:'ꦒꦶ',baca:'gi'},{sandhi:'ꦒꦸ',baca:'gu'},{sandhi:'ꦒꦼ',baca:'gê'},{sandhi:'ꦺꦒ',baca:'gé'},{sandhi:'ꦺꦒꦴ',baca:'go'}]},
+  {latin:'ba',jawa:'ꦧ',pasangan:'꧀ꦧ',nama:'Aksara Ba',examples:[{sandhi:'ꦧꦶ',baca:'bi'},{sandhi:'ꦧꦸ',baca:'bu'},{sandhi:'ꦧꦼ',baca:'bê'},{sandhi:'ꦺꦧ',baca:'bé'},{sandhi:'ꦺꦧꦴ',baca:'bo'}]},
+  {latin:'tha',jawa:'ꦛ',pasangan:'꧀ꦛ',nama:'Aksara Tha',examples:[{sandhi:'ꦛꦶ',baca:'thi'},{sandhi:'ꦛꦸ',baca:'thu'},{sandhi:'ꦛꦼ',baca:'thê'},{sandhi:'ꦺꦛ',baca:'thé'},{sandhi:'ꦺꦛꦴ',baca:'tho'}]},
+  {latin:'nga',jawa:'ꦔ',pasangan:'꧀ꦔ',nama:'Aksara Nga',examples:[{sandhi:'ꦔꦶ',baca:'ngi'},{sandhi:'ꦔꦸ',baca:'ngu'},{sandhi:'ꦔꦼ',baca:'ngê'},{sandhi:'ꦺꦔ',baca:'ngé'},{sandhi:'ꦺꦔꦴ',baca:'ngo'}]}
+];
+const swaraData = [{nama:'Wulu (i)',simbol:'ꦶ'},{nama:'Suku (u)',simbol:'ꦸ'},{nama:'Pepet (ê)',simbol:'ꦼ'},{nama:'Taling (é)',simbol:'ꦺ'},{nama:'Taling Tarung (o)',simbol:'ꦺꦴ'}];
+const panyigegData = [{nama:'Wignyan (h)',simbol:'ꦃ'},{nama:'Layar (r)',simbol:'ꦂ'},{nama:'Cecak (ng)',simbol:'ꦁ'},{nama:'Pangkon (mati)',simbol:'꧀'}];
+const wyanjanaData = [{nama:'Cakra (r)',simbol:'ꦿ'},{nama:'Keret (rê)',simbol:'ꦽ'},{nama:'Pengkal (y)',simbol:'ꦾ'}];
+
+const rumpangQuestionsAll = [
+  {kalimat:'_____ digunakake kanggo menehi swara /i/ ing aksara Jawa',latin:'_____ digunakake kanggo menehi swara /i/ ing aksara Jawa',jawaban:'Wulu',opsi:['Suku','Wulu','Pepet','Taling']},
+  {kalimat:'Ing tembung ꦒꦸꦫꦸ, aksara "ga" diwenehi sandhangan _____',latin:'Ing tembung ꦒꦸꦫꦸ, aksara "ga" diwenehi sandhangan _____',jawaban:'Suku',opsi:['Wulu','Taling','Suku','Pepet']},
+  {kalimat:'Tembung "desa" menawa ditulis nganggo aksara Jawa mbutuhake sandhangan _____',latin:'Tembung "desa" menawa ditulis nganggo aksara Jawa mbutuhake sandhangan _____',jawaban:'Taling',opsi:['Wulu','Pepet','Taling','Suku']},
+  {kalimat:'Sandhangan pepet digunakake supaya aksara diwaca swara _____',latin:'Sandhangan pepet digunakake supaya aksara diwaca swara _____',jawaban:'ê',opsi:['i','ê','u','o']},
+  {kalimat:'Ing aksara Jawa, swara "o" ditulis nganggo sandhangan _____',latin:'Ing aksara Jawa, swara "o" ditulis nganggo sandhangan _____',jawaban:'Taling tarung',opsi:['Taling tarung','Wulu','Suku','Pepet']},
+  {kalimat:'Aksara ꦥꦶꦠꦶꦏ꧀ nggunakake sandhangan _____ amarga ana swara "i"',latin:'Aksara ꦥꦶꦠꦶꦏ꧀ nggunakake sandhangan _____ amarga ana swara "i"',jawaban:'Wulu',opsi:['Taling','Suku','Wulu','Pepet']},
+  {kalimat:'Supaya aksara ꦏ diwaca "ku", aksara kasebut kudu diwenehi sandhangan _____',latin:'Supaya aksara ꦏ diwaca "ku", aksara kasebut kudu diwenehi sandhangan _____',jawaban:'Suku',opsi:['Pepet','Wulu','Suku','Taling']},
+  {kalimat:'Sandhangan _____ digunakake ing tembung "roso" supaya aksara "sa" diwaca "so"',latin:'Sandhangan _____ digunakake ing tembung "roso" supaya aksara "sa" diwaca "so"',jawaban:'Taling tarung',opsi:['Wulu','Taling tarung','Pepet','Suku']},
+  {kalimat:'Ing tembung ꦮꦼꦢꦸꦱ, aksara "wa" diwaca "we" amarga nggunakake sandhangan _____',latin:'Ing tembung ꦮꦼꦢꦸꦱ, aksara "wa" diwaca "we" amarga nggunakake sandhangan _____',jawaban:'Pepet',opsi:['Taling','Pepet','Wulu','Suku']},
+  {kalimat:'_____ kalebu sandhangan swara',latin:'_____ kalebu sandhangan swara',jawaban:'Wulu',opsi:['Pangkon','Cecak','Wulu','Layar']},
+  {kalimat:'_____ digunakake kanggo nulis swara "ng" ing pungkasan wanda',latin:'_____ digunakake kanggo nulis swara "ng" ing pungkasan wanda',jawaban:'Cecak',opsi:['Pangkon','Cecak','Wignyan','Layar']},
+  {kalimat:'Ing tembung ꦏꦸꦕꦶꦁ, aksara pungkasan nggunakake sandhangan _____',latin:'Ing tembung ꦏꦸꦕꦶꦁ, aksara pungkasan nggunakake sandhangan _____',jawaban:'Cecak',opsi:['Pangkon','Wignyan','Cecak','Layar']},
+  {kalimat:'Sandhangan layar digunakake kanggo nulis swara _____',latin:'Sandhangan layar digunakake kanggo nulis swara _____',jawaban:'r',opsi:['ng','h','r','y']},
+  {kalimat:'Tembung "pasar" menawa ditulis nganggo aksara Jawa mbutuhake sandhangan _____ ing aksara pungkasan',latin:'Tembung "pasar" menawa ditulis nganggo aksara Jawa mbutuhake sandhangan _____ ing aksara pungkasan',jawaban:'Layar',opsi:['Layar','Cecak','Pangkon','Wignyan']},
+  {kalimat:'_____ kalebu sandhangan panyigeging wanda',latin:'_____ kalebu sandhangan panyigeging wanda',jawaban:'Cecak',opsi:['Wulu','Suku','Cecak','Pepet']},
+  {kalimat:'Sandhangan wignyan digunakake kanggo nulis swara _____',latin:'Sandhangan wignyan digunakake kanggo nulis swara _____',jawaban:'h',opsi:['h','r','ng','y']},
+  {kalimat:'Ing tembung "omah", aksara pungkasan mbutuhake sandhangan _____',latin:'Ing tembung "omah", aksara pungkasan mbutuhake sandhangan _____',jawaban:'Wignyan',opsi:['Layar','Wignyan','Pangkon','Cecak']},
+  {kalimat:'Sandhangan pangkon digunakake kanggo _____',latin:'Sandhangan pangkon digunakake kanggo _____',jawaban:'mateni aksara',opsi:['menehi swara u','menehi swara i','mateni aksara','menehi swara ng']},
+  {kalimat:'Aksara ꦩꦤꦸꦏ꧀ nggunakake sandhangan _____ ing aksara pungkasan',latin:'Aksara ꦩꦤꦸꦏ꧀ nggunakake sandhangan _____ ing aksara pungkasan',jawaban:'Pangkon',opsi:['Wignyan','Pangkon','Layar','Cecak']},
+  {kalimat:'Ing kelompok sandhangan ing ngisor iki, sing kalebu panyigeging wanda yaiku _____',latin:'Ing kelompok sandhangan ing ngisor iki, sing kalebu panyigeging wanda yaiku _____',jawaban:'Cecak, layar, wignyan',opsi:['Wulu, suku, taling','Pepet, taling, suku','Cecak, layar, wignyan','Wulu, pepet, taling']},
+  {kalimat:'_____ digunakake kanggo mateni swara aksara sadurunge',latin:'_____ digunakake kanggo mateni swara aksara sadurunge',jawaban:'Pasangan',opsi:['Taling','Wulu','Pasangan','Cecak']},
+  {kalimat:'Pasangan biasane ditulis ing _____ aksara pokok',latin:'Pasangan biasane ditulis ing _____ aksara pokok',jawaban:'sangisore',opsi:['ndhuwur','sangisore','jejere','ngarep']},
+  {kalimat:'Ing tembung "bakti", aksara "ta" ditulis nganggo _____',latin:'Ing tembung "bakti", aksara "ta" ditulis nganggo _____',jawaban:'Pasangan',opsi:['Pangkon','Sandhangan','Pasangan','Cecak']},
+  {kalimat:'Tembung "sakti" mbutuhake pasangan aksara _____',latin:'Tembung "sakti" mbutuhake pasangan aksara _____',jawaban:'ta',opsi:['ka','ta','sa','pa']},
+  {kalimat:'Yen ana rong konsonan sing jejeg, mula kudu nggunakake _____',latin:'Yen ana rong konsonan sing jejeg, mula kudu nggunakake _____',jawaban:'Pasangan',opsi:['Pasangan','Taling','Suku','Wulu']},
+  {kalimat:'Ing tembung "anak", pasangan sing digunakake yaiku pasangan aksara _____',latin:'Ing tembung "anak", pasangan sing digunakake yaiku pasangan aksara _____',jawaban:'ka',opsi:['ka','sa','pa','wa']},
+  {kalimat:'_____ ora kalebu sandhangan, nanging kalebu bagean saka aksara Jawa',latin:'_____ ora kalebu sandhangan, nanging kalebu bagean saka aksara Jawa',jawaban:'Pasangan',opsi:['Wulu','Pasangan','Pepet','Suku']},
+  {kalimat:'Tembung "mantri" mbutuhake pasangan aksara _____',latin:'Tembung "mantri" mbutuhake pasangan aksara _____',jawaban:'ta',opsi:['ta','ra','sa','pa']},
+  {kalimat:'Ing panulisan aksara Jawa, pasangan digunakake supaya aksara sadurunge ora diwaca nganggo swara _____',latin:'Ing panulisan aksara Jawa, pasangan digunakake supaya aksara sadurunge ora diwaca nganggo swara _____',jawaban:'a',opsi:['i','u','a','e']},
+  {kalimat:'Nalika nulis tembung "bakso", aksara "sa" kudu ditulis nganggo _____',latin:'Nalika nulis tembung "bakso", aksara "sa" kudu ditulis nganggo _____',jawaban:'Pasangan',opsi:['Wulu','Pasangan','Pangkon','Cecak']},
+  {kalimat:'Aksara ꦧꦸꦏꦸ diwaca _____',latin:'Aksara ꦧꦸꦏꦸ diwaca _____',jawaban:'buku',opsi:['biku','bako','buku','beko']},
+  {kalimat:'_____ minangka cara maca aksara ꦱꦶꦗꦶ sing bener',latin:'_____ minangka cara maca aksara ꦱꦶꦗꦶ sing bener',jawaban:'siji',opsi:['siji','suji','seje','sojo']},
+  {kalimat:'Aksara ꦢꦺꦱ diwaca _____',latin:'Aksara ꦢꦺꦱ diwaca _____',jawaban:'desa',opsi:['desa','dosa','disa','dusa']},
+  {kalimat:'Tembung _____ minangka wacan saka aksara ꦒꦸꦫꦸ',latin:'Tembung _____ minangka wacan saka aksara ꦒꦸꦫꦸ',jawaban:'guru',opsi:['gara','guru','giri','gero']},
+  {kalimat:'Aksara ꦏꦸꦕꦶꦁ diwaca _____',latin:'Aksara ꦏꦸꦕꦶꦁ diwaca _____',jawaban:'kucing',opsi:['koceng','kucing','kacang','kicang']},
+  {kalimat:'Tembung ꦮꦼꦢꦸꦱ diwaca _____',latin:'Tembung ꦮꦼꦢꦸꦱ diwaca _____',jawaban:'wedus',opsi:['widus','wodus','wedus','wadas']},
+  {kalimat:'Aksara ꦥꦶꦠꦶꦏ꧀ diwaca _____',latin:'Aksara ꦥꦶꦠꦶꦏ꧀ diwaca _____',jawaban:'pitik',opsi:['pitik','petek','putuk','potok']},
+  {kalimat:'_____ minangka wacan sing bener kanggo aksara ꦭꦶꦩ',latin:'_____ minangka wacan sing bener kanggo aksara ꦭꦶꦩ',jawaban:'lima',opsi:['lema','lima','loma','lumu']},
+  {kalimat:'Aksara ꦭꦺꦴꦫꦺ diwaca _____',latin:'Aksara ꦭꦺꦴꦫꦺ diwaca _____',jawaban:'lore',opsi:['lere','luru','lore','lara']},
+  {kalimat:'Tembung _____ minangka wacan saka aksara ꦏꦺꦴꦠ',latin:'Tembung _____ minangka wacan saka aksara ꦏꦺꦴꦠ',jawaban:'kota',opsi:['kata','kita','kota','keta']},
+  {kalimat:'ꦱꦶꦠꦶ ꦩꦔꦤ꧀ ____ ꦆꦁ ꦥꦮꦺꦴꦤ꧀',latin:'Siti mangan ____ ing pawon',jawaban:'ꦱꦼꦒ',opsi:['ꦱꦼꦒ','ꦧꦸꦏꦸ','ꦥꦼꦤ꧀ꦱꦶꦭ꧀','ꦏꦸꦂꦱꦶ']},
+  {kalimat:'ꦧꦸꦢꦶ ꦔ꧀ꦒꦮ ____ ꦩꦼꦚꦁ ꦱꦼꦏꦺꦴꦭꦃ',latin:'Budi nggawa ____ menyang sekolah',jawaban:'ꦧꦸꦏꦸ',opsi:['ꦱꦶꦏꦶꦭ꧀','ꦧꦸꦏꦸ','ꦥꦶꦱꦁ','ꦗꦩ']},
+  {kalimat:'ꦆꦧꦸ ꦠꦸꦏꦸ ꦱꦪꦸꦂ ꦆꦁ ____',latin:'Ibu tuku sayur ing ____',jawaban:'ꦥꦱꦂ',opsi:['ꦥꦱꦂ','ꦱꦼꦏꦺꦴꦭꦃ','ꦏꦼꦧꦺꦴꦤ꧀','ꦭꦥꦔꦤ꧀']},
+  {kalimat:'____ ꦚꦥꦸ ꦭꦠꦂ ꦱꦧꦺꦤ꧀ ꦌꦱꦸꦏ꧀',latin:'____ nyapu latar saben esuk',jawaban:'ꦆꦧꦸ',opsi:['ꦆꦧꦸ','ꦗꦩ','ꦠꦼꦭꦸ','ꦧꦸꦏꦸ']},
+  {kalimat:'ꦫꦶꦤ ꦱꦶꦤꦮꦸ ꦆꦁ ____',latin:'Rina sinau ing ____',jawaban:'ꦱꦼꦏꦺꦴꦭꦃ',opsi:['ꦥꦱꦂ','ꦱꦼꦏꦺꦴꦭꦃ','ꦏꦼꦧꦺꦴꦤ꧀','ꦗꦭꦤ꧀']},
+  {kalimat:'ꦄꦤ꧀ꦢꦶ ꦢꦺꦴꦭꦤꦤ꧀ ꦧꦭ꧀ ꦆꦁ ____',latin:'Andi dolanan bal ing ____',jawaban:'ꦭꦥꦔꦤ꧀',opsi:['ꦭꦥꦔꦤ꧀','ꦥꦮꦺꦴꦤ꧀','ꦏꦼꦧꦺꦴꦤ꧀','ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀']},
+  {kalimat:'ꦧꦥꦏ꧀ ꦩꦕ ꦏꦺꦴꦫꦤ꧀ ꦆꦁ ____',latin:'Bapak maca koran ing ____',jawaban:'ꦫꦸꦩꦃ',opsi:['ꦫꦸꦩꦃ','ꦥꦱꦂ','ꦗꦭꦤ꧀','ꦱꦮꦃ']},
+  {kalimat:'____ ꦔꦺꦴꦩ꧀ꦧꦺ ꦧꦚꦸ ꦱꦮꦶꦱꦺ ꦎꦭꦃꦫꦒ',latin:'____ ngombe banyu sawise olahraga',jawaban:'ꦱꦶꦠꦶ',opsi:['ꦥꦶꦱꦁ','ꦱꦶꦠꦶ','ꦏꦸꦂꦱꦶ','ꦩꦺꦗ']},
+  {kalimat:'ꦄꦢꦶ ꦠꦸꦏꦸ ____ ꦆꦁ ꦠꦺꦴꦏꦺꦴ',latin:'Adi tuku ____ ing toko',jawaban:'ꦥꦼꦤ꧀ꦱꦶꦭ꧀',opsi:['ꦥꦼꦤ꧀ꦱꦶꦭ꧀','ꦱꦮꦃ','ꦱꦸꦔꦻ','ꦱꦼꦏꦺꦴꦭꦃ']},
+  {kalimat:'ꦥꦏ꧀ ꦒꦸꦫꦸ ꦩꦸꦭꦁ ꦆꦁ ____',latin:'Pak Guru mulang ing ____',jawaban:'ꦏꦼꦭꦱ꧀',opsi:['ꦏꦼꦭꦱ꧀','ꦥꦱꦂ','ꦭꦥꦔꦤ꧀','ꦏꦼꦧꦺꦴꦤ꧀']},
+  {kalimat:'ꦫꦸꦢꦶ ꦤꦸꦩ꧀ꦥꦏ꧀ ____ ꦩꦼꦚꦁ ꦱꦼꦏꦺꦴꦭꦃ',latin:'Rudi numpak ____ menyang sekolah',jawaban:'ꦱꦶꦏꦶꦭ꧀',opsi:['ꦱꦶꦏꦶꦭ꧀','ꦧꦸꦏꦸ','ꦠꦼꦭꦸ','ꦏꦸꦂꦱꦶ']},
+  {kalimat:'ꦢꦶꦤ ꦤꦤ꧀ꦢꦸꦂ ꦏꦼꦩ꧀ꦧꦁ ꦆꦁ ____',latin:'Dina nandur kembang ing ____',jawaban:'ꦏꦼꦧꦺꦴꦤ꧀',opsi:['ꦏꦼꦧꦺꦴꦤ꧀','ꦥꦮꦺꦴꦤ꧀','ꦏꦼꦭꦱ꧀','ꦗꦭꦤ꧀']},
+  {kalimat:'____ ꦠꦸꦫꦸ ꦆꦁ ꦏꦩꦂ',latin:'____ turu ing kamar',jawaban:'ꦧꦥꦏ꧀',opsi:['ꦧꦥꦏ꧀','ꦱꦼꦒ','ꦗꦩ','ꦥꦼꦤ꧀ꦱꦶꦭ꧀']},
+  {kalimat:'ꦭꦤꦶ ꦔꦸꦩ꧀ꦧꦃ ꦠꦔꦤ꧀ ꦔꦁꦒꦺ ____',latin:'Lani ngumbah tangan nganggo ____',jawaban:'ꦧꦚꦸ',opsi:['ꦧꦚꦸ','ꦧꦸꦏꦸ','ꦩꦺꦗ','ꦱꦶꦏꦶꦭ꧀']},
+  {kalimat:'ꦱꦶꦱ꧀ꦮ ꦩꦕ ꦧꦸꦏꦸ ꦆꦁ ____',latin:'Siswa maca buku ing ____',jawaban:'ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀',opsi:['ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀','ꦭꦥꦔꦤ꧀','ꦥꦱꦂ','ꦱꦮꦃ']},
+  {kalimat:'____ ꦚꦶꦫꦩ꧀ ꦠꦤ꧀ꦢꦸꦫꦤ꧀ ꦱꦧꦺꦤ꧀ ꦱꦺꦴꦫꦺ',latin:'____ nyiram tanduran saben sore',jawaban:'ꦫꦶꦤ',opsi:['ꦫꦶꦤ','ꦏꦸꦂꦱꦶ','ꦧꦸꦏꦸ','ꦗꦩ']},
+  {kalimat:'ꦠꦺꦴꦤꦺ ꦚꦼꦏꦼꦭ꧀ ____ ꦏꦁꦒꦺ ꦤꦸꦭꦶꦱ꧀',latin:'Tono nyekel ____ kanggo nulis',jawaban:'ꦥꦼꦤ꧀ꦱꦶꦭ꧀',opsi:['ꦥꦼꦤ꧀ꦱꦶꦭ꧀','ꦱꦶꦏꦶꦭ꧀','ꦥꦶꦱꦁ','ꦧꦭ꧀']},
+  {kalimat:'ꦆꦧꦸ ꦩꦱꦏ꧀ ꦆꦁ ____',latin:'Ibu masak ing ____',jawaban:'ꦥꦮꦺꦴꦤ꧀',opsi:['ꦥꦮꦺꦴꦤ꧀','ꦱꦮꦃ','ꦏꦼꦭꦱ꧀','ꦭꦥꦔꦤ꧀']},
+  {kalimat:'____ ꦩꦔꦤ꧀ ꦒꦼꦢꦁ ꦮꦏ꧀ꦠꦸ ꦆꦱ꧀ꦠꦶꦫꦲꦠ꧀',latin:'____ mangan gedhang nalika istirahat',jawaban:'ꦧꦸꦢꦶ',opsi:['ꦧꦸꦢꦶ','ꦩꦺꦗ','ꦏꦸꦂꦱꦶ','ꦗꦩ']},
+  {kalimat:'ꦄꦤ ꦆꦮꦏ꧀ ꦆꦁ ____',latin:'Ana iwak ing ____',jawaban:'ꦏꦸꦭꦩ꧀',opsi:['ꦏꦸꦭꦩ꧀','ꦏꦼꦭꦱ꧀','ꦠꦺꦴꦏꦺꦴ','ꦥꦱꦂ']},
+  {kalimat:'ꦧꦥꦏ꧀ ꦚꦩ꧀ꦧꦸꦠ꧀ ꦒꦮꦺ ꦆꦁ ____',latin:'Bapak nyambut gawe ing ____',jawaban:'ꦏꦤ꧀ꦠꦺꦂ',opsi:['ꦏꦤ꧀ꦠꦺꦂ','ꦥꦮꦺꦴꦤ꧀','ꦱꦮꦃ','ꦏꦼꦭꦱ꧀']},
+  {kalimat:'____ ꦩ꧀ꦭꦏꦸ ꦩꦼꦚꦁ ꦠꦺꦴꦏꦺꦴ',latin:'____ mlaku menyang toko',jawaban:'ꦢꦶꦤ',opsi:['ꦢꦶꦤ','ꦧꦸꦏꦸ','ꦥꦶꦱꦁ','ꦩꦺꦗ']},
+  {kalimat:'ꦱꦥꦶ ꦩꦔꦤ꧀ ____ ꦆꦁ ꦱꦮꦃ',latin:'Sapi mangan ____ ing sawah',jawaban:'ꦫꦸꦩ꧀ꦥꦸꦠ꧀',opsi:['ꦫꦸꦩ꧀ꦥꦸꦠ꧀','ꦧꦸꦏꦸ','ꦧꦚꦸ','ꦗꦩ']},
+  {kalimat:'ꦤꦶꦤ ꦔ꧀ꦒꦩ꧀ꦧꦂ ꦔꦁꦒꦺ ____',latin:'Nina nggambar nganggo ____',jawaban:'ꦏꦿꦪꦺꦴꦤ꧀',opsi:['ꦏꦿꦪꦺꦴꦤ꧀','ꦧꦭ꧀','ꦥꦶꦱꦁ','ꦱꦶꦏꦶꦭ꧀']},
+  {kalimat:'____ ꦭꦸꦔ꧀ꦒꦸꦃ ꦆꦁ ꦏꦸꦂꦱꦶ',latin:'____ lungguh ing kursi',jawaban:'ꦄꦢꦶ',opsi:['ꦄꦢꦶ','ꦧꦸꦏꦸ','ꦗꦩ','ꦥꦶꦱꦁ']},
+  {kalimat:'ꦥꦏ꧀ ꦠꦤꦶ ꦤꦤ꧀ꦢꦸꦂ ꦥꦫꦶ ꦆꦁ ____',latin:'Pak tani nandur pari ing ____',jawaban:'ꦱꦮꦃ',opsi:['ꦱꦮꦃ','ꦏꦼꦭꦱ꧀','ꦠꦺꦴꦏꦺꦴ','ꦥꦮꦺꦴꦤ꧀']},
+  {kalimat:'ꦫꦺꦴꦤꦶ ꦠꦸꦏꦸ ꦫꦺꦴꦠꦶ ꦆꦁ ____',latin:'Roni tuku roti ing ____',jawaban:'ꦠꦺꦴꦏꦺꦴ',opsi:['ꦠꦺꦴꦏꦺꦴ','ꦱꦮꦃ','ꦏꦩꦂ','ꦭꦥꦔꦤ꧀']},
+  {kalimat:'____ ꦔꦿꦼꦱꦶꦏꦶ ꦥꦥꦤ꧀ ꦠꦸꦭꦶꦱ꧀',latin:'____ ngresiki papan tulis',jawaban:'ꦱꦶꦠꦶ',opsi:['ꦱꦶꦠꦶ','ꦗꦩ','ꦏꦸꦂꦱꦶ','ꦧꦸꦏꦸ']},
+  {kalimat:'ꦢꦺꦴꦢꦶ ꦚꦶꦩ꧀ꦥꦺꦤ꧀ ꦧꦸꦏꦸ ꦆꦁ ____',latin:'Dodi nyimpen buku ing ____',jawaban:'ꦠꦱ꧀',opsi:['ꦠꦱ꧀','ꦏꦸꦭꦩ꧀','ꦧꦚꦸ','ꦱꦮꦃ']},
+  {kalimat:'ꦄꦤ ꦩꦤꦸꦏ꧀ ꦆꦁ ____',latin:'Ana manuk ing ____',jawaban:'ꦮꦶꦠ꧀',opsi:['ꦮꦶꦠ꧀','ꦏꦩꦂ','ꦏꦼꦭꦱ꧀','ꦥꦮꦺꦴꦤ꧀']},
+  {kalimat:'ꦠꦫꦶ ꦩꦕ ____ ꦱꦢꦸꦫꦸꦔꦺ ꦠꦸꦫꦸ',latin:'Tari maca ____ sadurunge turu',jawaban:'ꦧꦸꦏꦸ',opsi:['ꦧꦸꦏꦸ','ꦝꦶꦁ','ꦥꦱꦂ','ꦗꦩ']},
+  {kalimat:'____ ꦄꦢꦸꦱ꧀ ꦆꦁ ꦗꦼꦝꦶꦁ',latin:'____ adus ing jedhing',jawaban:'ꦧꦸꦢꦶ',opsi:['ꦧꦸꦢꦶ','ꦢꦶꦤ','ꦩꦺꦗ','ꦏꦸꦂꦱꦶ']},
+  {kalimat:'ꦥꦏ꧀ ꦒꦸꦫꦸ ꦤꦸꦭꦶꦱ꧀ ꦆꦁ ____',latin:'Pak Guru nulis ing ____',jawaban:'ꦥꦥꦤ꧀ ꦠꦸꦭꦶꦱ꧀',opsi:['ꦥꦥꦤ꧀ ꦠꦸꦭꦶꦱ꧀','ꦱꦫꦮ','ꦭꦥꦔꦤ꧀','ꦥꦱꦂ']},
+  {kalimat:'ꦭꦤꦶ ꦠꦸꦏꦸ ____ ꦆꦁ ꦥꦱꦂ',latin:'Lani tuku ____ ing pasar',jawaban:'ꦥꦶꦱꦁ',opsi:['ꦥꦶꦱꦁ','ꦥꦥꦤ꧀','ꦧꦚꦸ','ꦗꦼꦫꦸꦏ꧀']},
+  {kalimat:'____ ꦚꦥꦸ ꦏꦼꦭꦱ꧀ ꦱꦧꦺꦤ꧀ ꦢꦶꦤ',latin:'____ nyapu kelas saben dina',jawaban:'ꦱꦶꦱ꧀ꦮ',opsi:['ꦱꦶꦱ꧀ꦮ','ꦡꦤ','ꦥꦥꦏ꧀','ꦢꦶꦤ']},
+  {kalimat:'ꦏꦸꦕꦶꦁ ꦠꦸꦫꦸ ꦆꦁ ____',latin:'Kucing turu ing ____',jawaban:'ꦏꦸꦂꦱꦶ',opsi:['ꦏꦸꦂꦱꦶ','ꦏꦤ꧀ꦝꦁ','ꦱꦮꦃ','ꦭꦥꦔꦤ꧀']},
+  {kalimat:'ꦫꦸꦢꦶ ꦔꦺꦴꦩ꧀ꦧꦺ ____ ꦮꦏ꧀ꦠꦸ ꦄꦮꦤ꧀',latin:'Rudi ngombe ____ nalika awan',jawaban:'ꦧꦚꦸ',opsi:['ꦧꦚꦸ','ꦱꦸꦔꦻ','ꦠꦺꦱ','ꦧꦸꦏꦸ']},
+  {kalimat:'____ ꦔ꧀ꦒꦮ ꦠꦱ꧀ ꦄꦚꦂ',latin:'____ nggawa tas anyar',jawaban:'ꦄꦤ꧀ꦢꦶ',opsi:['ꦄꦤ꧀ꦢꦶ','ꦧꦸꦏꦸ','ꦗꦩ','ꦩꦺꦗ']},
+  {kalimat:'ꦧꦼꦧꦺꦏ꧀ ꦔ꧀ꦭꦔꦶ ꦆꦁ ____',latin:'Bebek nglangi ing ____',jawaban:'ꦏꦸꦭꦩ꧀',opsi:['ꦏꦸꦭꦩ꧀','ꦏꦼꦭꦱ꧀','ꦱꦮꦃ','ꦠꦺꦴꦏꦺꦴ']},
+  {kalimat:'ꦢꦶꦤ ꦱꦶꦤꦮꦸ ꦩꦠꦼꦩꦠꦶꦏ ꦆꦁ ____',latin:'Dina sinau matematika ing ____',jawaban:'ꦏꦼꦭꦱ꧀',opsi:['ꦏꦼꦭꦱ꧀','ꦢꦶꦁ','ꦲꦩ','ꦥꦱꦂ']},
+  {kalimat:'____ ꦩꦔꦤ꧀ ꦫꦺꦴꦠꦶ ꦮꦏ꧀ꦠꦸ ꦆꦱ꧀ꦠꦶꦫꦲꦠ꧀',latin:'____ mangan roti nalika istirahat',jawaban:'ꦫꦶꦤ',opsi:['ꦫꦶꦤ','ꦠꦼꦭꦸ','ꦥꦶꦱꦁ','ꦏꦸꦂꦱꦶ']},
+  {kalimat:'ꦆꦧꦸ ꦚꦶꦩ꧀ꦥꦺꦤ꧀ ꦧꦼꦫꦱ꧀ ꦆꦁ ____',latin:'Ibu nyimpen beras ing ____',jawaban:'ꦥꦮꦺꦴꦤ꧀',opsi:['ꦥꦮꦺꦴꦤ꧀','ꦏꦤ꧀ꦠꦺꦂ','ꦧꦚꦸ','ꦠꦱ꧀']},
+  {kalimat:'ꦗꦺꦴꦏꦺ ꦢꦺꦴꦭꦤꦤ꧀ ____ ꦏꦫꦺ ꦏꦚ꧀ꦕ',latin:'Joko dolanan ____ karo kanca',jawaban:'ꦧꦭ꧀',opsi:['ꦧꦭ꧀','ꦧꦥ','ꦏꦤ','ꦥꦶꦱꦁ']},
+  {kalimat:'____ ꦩ꧀ꦭꦺꦧꦸ ꦏꦼꦭꦱ꧀ ꦥꦱ꧀ ꦮꦺꦏ꧀ꦠꦸꦤꦺ',latin:'____ mlebu kelas pas wektune',jawaban:'ꦱꦶꦱ꧀ꦮ',opsi:['ꦱꦶꦱ꧀ꦮ','ꦢꦶꦤ','ꦫꦶꦤ','ꦠꦼꦭꦸ']},
+  {kalimat:'ꦄꦤ ꦮꦺꦴꦃ ꦄꦥꦺꦭ꧀ ꦆꦁ ____',latin:'Ana woh apel ing ____',jawaban:'ꦩꦺꦗ',opsi:['ꦩꦺꦗ','ꦚꦭ','ꦗꦮ','ꦧꦺꦔ']},
+  {kalimat:'ꦱꦤ꧀ꦠꦶ ꦚꦶꦭꦶꦃ ꦧꦸꦏꦸ ꦱꦏ ____',latin:'Santi nyilih buku saka ____',jawaban:'ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀',opsi:['ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀','ꦭꦥꦔꦤ꧀','ꦥꦱꦂ','ꦠꦺꦴꦏꦺꦴ']},
+  {kalimat:'____ ꦔ꧀ꦒꦺꦴꦭꦺꦏꦶ ꦆꦮꦏ꧀ ꦆꦁ ꦏꦭꦶ',latin:'____ nggoleki iwak ing kali',jawaban:'ꦧꦥꦏ꧀',opsi:['ꦧꦥꦏ꧀','ꦧꦸꦢꦶ','ꦫꦸꦢꦶ','ꦥꦏ꧀']},
+  {kalimat:'ꦫꦶꦤ ꦔ꧀ꦒꦤ꧀ꦠꦸꦁ ꦠꦱ꧀ ꦆꦁ ____',latin:'Rina nggantung tas ing ____',jawaban:'ꦏꦸꦠꦁ',opsi:['ꦏꦸꦠꦁ','ꦏꦤ','ꦏꦁ','ꦕꦶꦤ']},
+  {kalimat:'ꦥꦏ꧀ ꦠꦤꦶ ꦔ꧀ꦒꦮ ꦥꦫꦶ ꦔꦁꦒꦺ ____',latin:'Pak tani nggawa pari nganggo ____',jawaban:'ꦒꦼꦫꦺꦴꦧꦏ꧀',opsi:['ꦒꦼꦫꦺꦴꦧꦏ꧀','ꦧꦥ','ꦏꦤ','ꦕꦤ']},
+  {kalimat:'____ ꦩꦕ ꦢꦺꦴꦁꦒꦺꦁ ꦆꦁ ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀',latin:'____ maca dongeng ing perpustakaan',jawaban:'ꦭꦶꦤ',opsi:['ꦭꦶꦤ','ꦠꦫꦶ','ꦰꦩꦤ','ꦤꦶꦤ']},
+  {kalimat:'ꦄꦤ ꦄꦪꦩ꧀ ꦆꦁ ____',latin:'Ana ayam ing ____',jawaban:'ꦏꦤ꧀ꦝꦁ',opsi:['ꦏꦤ꧀ꦝꦁ','ꦏꦿꦪ','ꦏꦔ','ꦠꦠ']},
+  {kalimat:'____ ꦚꦥꦸ ꦠꦺꦫꦱ꧀ ꦎꦩꦃ',latin:'____ nyapu teras omah',jawaban:'ꦆꦧꦸ',opsi:['ꦆꦧꦸ','ꦥꦏ꧀','ꦠꦼꦭꦸ','ꦫꦶꦤ']},
+  {kalimat:'ꦠꦺꦴꦤꦺ ꦠꦸꦏꦸ ____ ꦏꦁꦒꦺ ꦱꦫꦥꦤ꧀',latin:'Tono tuku ____ kanggo sarapan',jawaban:'ꦫꦺꦴꦠꦶ',opsi:['ꦫꦺꦴꦠꦶ','ꦧꦚꦸ','ꦱꦼꦒ','ꦏꦂꦱ']},
+  {kalimat:'____ ꦚꦶꦫꦩ꧀ ꦏꦼꦩ꧀ꦧꦁ ꦆꦁ ꦏꦼꦧꦺꦴꦤ꧀',latin:'____ nyiram kembang ing kebon',jawaban:'ꦄꦢꦶ',opsi:['ꦄꦢꦶ','ꦫꦶꦤ','ꦧꦸꦢꦶ','ꦩꦺꦗ']},
+  {kalimat:'ꦱꦶꦱ꧀ꦮ ꦎꦭꦃꦫꦒ ꦆꦁ ____',latin:'Siswa olahraga ing ____',jawaban:'ꦭꦥꦔꦤ꧀',opsi:['ꦭꦥꦔꦤ꧀','ꦏꦼꦭꦱ꧀','ꦏꦧ','ꦢꦚ']},
+  {kalimat:'____ ꦤꦸꦭꦶꦱ꧀ ꦠꦸꦒꦱ꧀ ꦆꦁ ꦧꦸꦏꦸ',latin:'____ nulis tugas ing buku',jawaban:'ꦧꦸꦢꦶ',opsi:['ꦧꦸꦢꦶ','ꦠꦮꦸ','ꦮꦩ','ꦗꦶꦗꦧ']},
+  {kalimat:'ꦄꦤ ꦱꦸꦱꦸ ꦆꦁ ____',latin:'Ana susu ing ____',jawaban:'ꦒꦼꦭꦱ꧀',opsi:['ꦒꦼꦭꦱ꧀','ꦠꦯ','ꦠꦱ','ꦔꦁꦒ']},
+  {kalimat:'ꦭꦤꦶ ꦠꦸꦏꦸ ____ ꦆꦁ ꦥꦱꦂ',latin:'Lani tuku ____ ing pasar',jawaban:'ꦗꦼꦫꦸꦏ꧀',opsi:['ꦗꦼꦫꦸꦏ꧀','ꦥꦶꦱꦁ','ꦧꦚꦸ','ꦠꦼꦭꦸ']},
+  {kalimat:'____ ꦔꦿꦼꦱꦶꦏꦶ ꦥꦥꦤ꧀ ꦠꦸꦭꦶꦱ꧀ ꦱꦮꦶꦱꦺ ꦥꦼꦭꦗꦫꦤ꧀',latin:'____ ngresiki papan tulis sawise pelajaran',jawaban:'ꦱꦶꦱ꧀ꦮ',opsi:['ꦱꦶꦱ꧀ꦮ','ꦧꦸꦢꦶ','ꦭꦤꦶ','ꦗꦩ']},
+  {kalimat:'ꦧꦸꦢꦶ ꦭꦸꦔ ꦩꦼꦚꦁ ____ ꦏꦁꦒꦺ ꦚꦶꦭꦶꦃ ꦧꦸꦏꦸ',latin:'Budi lunga menyang ____ kanggo nyilih buku',jawaban:'ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀',opsi:['ꦥꦱꦂ','ꦥꦼꦂꦥꦸꦱ꧀ꦠꦏꦴꦤ꧀','ꦭꦥꦔꦤ꧀','ꦏꦼꦧꦺꦴꦤ꧀']}
+];
+
+const cocokkanQuestionsAll = [
+  {jawa:'ꦲ',latin:'ha'},{jawa:'ꦤ',latin:'na'},{jawa:'ꦕ',latin:'ca'},{jawa:'ꦫ',latin:'ra'},{jawa:'ꦏ',latin:'ka'},
+  {jawa:'ꦢ',latin:'da'},{jawa:'ꦠ',latin:'ta'},{jawa:'ꦱ',latin:'sa'},{jawa:'ꦮ',latin:'wa'},{jawa:'ꦭ',latin:'la'},
+  {jawa:'ꦥ',latin:'pa'},{jawa:'ꦝ',latin:'dha'},{jawa:'ꦗ',latin:'ja'},{jawa:'ꦪ',latin:'ya'},{jawa:'ꦚ',latin:'nya'},
+  {jawa:'ꦩ',latin:'ma'},{jawa:'ꦒ',latin:'ga'},{jawa:'ꦧ',latin:'ba'},{jawa:'ꦛ',latin:'tha'},{jawa:'ꦔ',latin:'nga'},
+  {jawa:'ꦲꦤ',latin:'hana'},{jawa:'ꦕꦫꦏ',latin:'carak'},{jawa:'ꦢꦠ',latin:'data'},{jawa:'ꦱꦮꦭ',latin:'sawala'},{jawa:'ꦥꦢ',latin:'pada'},
+  {jawa:'ꦧꦥ',latin:'bapa'},{jawa:'ꦏꦤ',latin:'kana'},{jawa:'ꦫꦠ',latin:'rata'},{jawa:'ꦗꦪ',latin:'jaya'},{jawa:'ꦭꦮ',latin:'lawa'},
+  {jawa:'ꦩꦱ',latin:'masa'},{jawa:'ꦱꦥ',latin:'sapa'},{jawa:'ꦠꦥ',latin:'tapa'},{jawa:'ꦤꦒ',latin:'naga'},{jawa:'ꦫꦱ',latin:'rasa'},
+  {jawa:'ꦒꦫ',latin:'gara'},{jawa:'ꦢꦢ',latin:'dada'},{jawa:'ꦭꦭ',latin:'lala'},{jawa:'ꦱꦫ',latin:'sara'},{jawa:'ꦮꦱ',latin:'wasa'}
+];
+
+let cocokkanState = {};
+
+function switchTab(tab) {
+  document.querySelectorAll('[id^="section-"]').forEach(s => s.classList.add('hidden'));
+  document.getElementById('section-' + tab).classList.remove('hidden');
+  if(tab === 'menulis') initCanvas();
+}
+
+function renderAksara() {
+  document.getElementById('aksara-grid').innerHTML = aksaraData.map((a, idx) => `
+    <div class="aksara-card stagger-item bg-cream border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-navy transition hover:shadow-md" onclick="showAksaraDetail(${idx})">
+      <div class="javanese text-3xl text-navy">${a.jawa}</div>
+      <div class="text-xs font-600 text-slate-600 mt-1">${a.latin}</div>
+    </div>
+  `).join('');
+}
+
+function renderPasangan() {
+  document.getElementById('pasangan-grid').innerHTML = aksaraData.map((a, idx) => `
+    <div class="aksara-card stagger-item bg-cream border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-gold transition hover:shadow-md" onclick="showAksaraDetail(${idx})">
+      <div class="javanese text-3xl text-gold">${a.pasangan}</div>
+      <div class="text-xs font-600 text-slate-600 mt-1">${a.latin}</div>
+    </div>
+  `).join('');
+}
+
+function renderSandhangan() {
+  document.getElementById('swara-grid').innerHTML = swaraData.map((s, idx) => {
+    const exampleMaps = {
+      0: {nama: 'Wulu (ꦶ)', deskripsi: 'untuk ngganti swara "a" dadi swara "i"', contoh: [{dari: 'ꦏ (ka)', ke: 'ꦏꦶ (ki)'}, {dari: 'ꦲ (ha)', ke: 'ꦲꦶ (hi)'}, {dari: 'ꦢ (da)', ke: 'ꦢꦶ (di)'}]},
+      1: {nama: 'Suku (ꦸ)', deskripsi: 'untuk ngganti swara "a" dadi swara "u"', contoh: [{dari: 'ꦏ (ka)', ke: 'ꦏꦸ (ku)'}, {dari: 'ꦧ (ba)', ke: 'ꦧꦸ (bu)'}, {dari: 'ꦲ (ha)', ke: 'ꦲꦸ (hu)'}]},
+      2: {nama: 'Pepet (ꦼ)', deskripsi: 'untuk ngganti swara "a" dadi swara "ê"', contoh: [{dari: 'ꦏ (ka)', ke: 'ꦏꦼ (kê)'}, {dari: 'ꦲ (ha)', ke: 'ꦲꦼ (hê)'}, {dari: 'ꦢ (da)', ke: 'ꦢꦼ (dê)'}]},
+      3: {nama: 'Taling (ꦺ)', deskripsi: 'untuk ngganti swara "a" dadi swara "é"', contoh: [{dari: 'ꦏ (ka)', ke: 'ꦏꦺ (ké)'}, {dari: 'ꦧ (ba)', ke: 'ꦧꦺ (bé)'}, {dari: 'ꦤ (na)', ke: 'ꦤꦺ (né)'}]},
+      4: {nama: 'Taling Tarung (ꦺꦴ)', deskripsi: 'untuk ngganti swara "a" dadi swara "o"', contoh: [{dari: 'ꦏ (ka)', ke: 'ꦏꦺꦴ (ko)'}, {dari: 'ꦲ (ha)', ke: 'ꦲꦺꦴ (ho)'}, {dari: 'ꦢ (da)', ke: 'ꦢꦺꦴ (do)'}]}
+    };
+    const data = exampleMaps[idx];
+    const gradients = ['from-cyan-400 to-blue-500','from-sky-400 to-blue-500','from-indigo-400 to-blue-600','from-blue-400 to-indigo-500','from-teal-400 to-blue-500'];
+    return `
+      <div class="bg-gradient-to-br ${gradients[idx]} rounded-xl p-5 hover:shadow-xl transition transform hover:scale-102 border border-opacity-20 border-white">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="javanese text-6xl text-white drop-shadow-lg">${s.simbol}</div>
+          <div>
+            <p class="font-700 text-white text-lg javanese drop-shadow">${data.nama}</p>
+            <p class="text-sm text-white/90">${data.deskripsi}</p>
+          </div>
+        </div>
+        <div class="bg-white/95 backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-md">
+          <p class="text-xs font-700 text-slate-700 mb-3">📚 Contoh Penggunaan:</p>
+          ${data.contoh.map(ex => `<div class="flex justify-between text-sm javanese"><span class="text-slate-600">${ex.dari}</span><span class="text-slate-400 font-600">→</span><span class="font-700 text-blue-600">${ex.ke}</span></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+  
+  document.getElementById('panyigeg-grid').innerHTML = panyigegData.map((s, idx) => {
+    const exampleMaps = {
+      0: {nama: 'Wignyan (ꦃ)', deskripsi: 'menehi swara "h" ing pungkasan wanda', contoh: [{teks: 'ꦎꦩꦃ', baca: 'omah'}, {teks: 'ꦱꦺꦏꦺꦴꦭꦃ', baca: 'sekolah'}, {teks: 'ꦠꦼꦭꦸꦃ', baca: 'teluh'}]},
+      1: {nama: 'Layar (ꦂ)', deskripsi: 'menehi swara "r" ing pungkasan wanda', contoh: [{teks: 'ꦥꦱꦂ', baca: 'pasar'}, {teks: 'ꦭꦼꦧꦂ', baca: 'lebar'}, {teks: 'ꦥꦍ꧀ꦲꦼꦫꦂ', baca: 'pathewar'}]},
+      2: {nama: 'Cecak (ꦁ)', deskripsi: 'menehi swara "ng" ing pungkasan wanda', contoh: [{teks: 'ꦏꦸꦕꦶꦁ', baca: 'kucing'}, {teks: 'ꦮꦫꦸꦁ', baca: 'warung'}, {teks: 'ꦏꦿꦺꦴꦁ', baca: 'kreng'}]},
+      3: {nama: 'Pangkon (꧀)', deskripsi: 'mateni swara aksara supaya ora diwaca', contoh: [{teks: 'ꦩꦤꦸꦏ꧀', baca: 'manuk'}, {teks: 'ꦥꦏ꧀', baca: 'pak'}, {teks: 'ꦧꦸꦏ꧀', baca: 'buk'}]}
+    };
+    const data = exampleMaps[idx];
+    const gradients = ['from-emerald-400 to-teal-500','from-green-400 to-emerald-500','from-teal-400 to-cyan-500','from-lime-400 to-green-500'];
+    return `
+      <div class="bg-gradient-to-br ${gradients[idx]} rounded-xl p-5 hover:shadow-xl transition transform hover:scale-102 border border-opacity-20 border-white">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="javanese text-6xl text-white drop-shadow-lg">${s.simbol}</div>
+          <div>
+            <p class="font-700 text-white text-lg javanese drop-shadow">${data.nama}</p>
+            <p class="text-sm text-white/90">${data.deskripsi}</p>
+          </div>
+        </div>
+        <div class="bg-white/95 backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-md">
+          <p class="text-xs font-700 text-slate-700 mb-3">📝 Contoh Penggunaan:</p>
+          ${data.contoh.map(ex => `<div class="flex justify-between text-sm javanese"><span class="font-700 text-slate-700">${ex.teks}</span><span class="text-slate-600 font-500">${ex.baca}</span></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+  
+  document.getElementById('wyanjana-grid').innerHTML = wyanjanaData.map((s, idx) => {
+    const exampleMaps = {
+      0: {nama: 'Cakra (ꦿ)', deskripsi: 'nambah swara "r" sawise aksara utama', contoh: [{teks: 'ꦏꦿ', baca: 'kra'}, {teks: 'ꦥꦿ', baca: 'pra'}, {teks: 'ꦒꦿ', baca: 'gra'}]},
+      1: {nama: 'Keret (ꦽ)', deskripsi: 'menehi swara "rê" sawise aksara', contoh: [{teks: 'ꦏꦽ', baca: 'krê'}, {teks: 'ꦒꦽ', baca: 'grê'}, {teks: 'ꦧꦽ', baca: 'brê'}]},
+      2: {nama: 'Pengkal (ꦾ)', deskripsi: 'nambah swara "y" sawise aksara utama', contoh: [{teks: 'ꦏꦾ', baca: 'kya'}, {teks: 'ꦱꦾ', baca: 'sya'}, {teks: 'ꦧꦾ', baca: 'bya'}]}
+    };
+    const data = exampleMaps[idx];
+    const gradients = ['from-violet-400 to-purple-500','from-purple-400 to-indigo-500','from-fuchsia-400 to-purple-500'];
+    return `
+      <div class="bg-gradient-to-br ${gradients[idx]} rounded-xl p-5 hover:shadow-xl transition transform hover:scale-102 border border-opacity-20 border-white">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="javanese text-6xl text-white drop-shadow-lg">${s.simbol}</div>
+          <div>
+            <p class="font-700 text-white text-lg javanese drop-shadow">${data.nama}</p>
+            <p class="text-sm text-white/90">${data.deskripsi}</p>
+          </div>
+        </div>
+        <div class="bg-white/95 backdrop-blur-sm rounded-lg p-4 space-y-2 shadow-md">
+          <p class="text-xs font-700 text-slate-700 mb-3">⚡ Contoh Penggunaan:</p>
+          ${data.contoh.map(ex => `<div class="flex justify-between text-sm javanese"><span class="font-700 text-slate-700">${ex.teks}</span><span class="text-slate-600 font-500">${ex.baca}</span></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function showAksaraDetail(idx) {
+  const aksara = aksaraData[idx];
+  document.getElementById('modal-jawa').textContent = aksara.jawa;
+  document.getElementById('modal-name').textContent = aksara.nama;
+  document.getElementById('modal-latin').textContent = aksara.latin;
+  document.getElementById('modal-pasangan').textContent = aksara.pasangan;
+  document.getElementById('modal-sandhangan-examples').innerHTML = aksara.examples.map(ex => 
+    `<div class="flex items-center justify-between text-sm"><span class="javanese text-base text-navy font-600">${ex.sandhi}</span><span class="text-slate-600">= ${ex.baca}</span></div>`
+  ).join('');
+  document.getElementById('aksara-modal').classList.remove('hidden');
+  window.currentAksara = aksara;
+  lucide.createIcons();
+}
+
+function closeAksaraModal() { document.getElementById('aksara-modal').classList.add('hidden'); }
+
+function playAksaraSound() {
+  if(!window.currentAksara) return;
+  const utterance = new SpeechSynthesisUtterance(window.currentAksara.latin);
+  utterance.lang = 'id-ID';
+  speechSynthesis.speak(utterance);
+}
+
+let rumpangState = {};
+
+function renderRumpang() {
+  const questions = [...rumpangQuestionsAll].sort(() => Math.random() - 0.5).slice(0, 10);
+  rumpangState = {};
+  document.getElementById('rumpang-questions').innerHTML = questions.map((q, qi) => {
+    const shuffled = [...q.opsi].sort(() => Math.random() - 0.5);
+    rumpangState[qi] = {answered: false, correct: false, placed: null};
+    const latinText = q.latin && q.latin !== q.kalimat ? `<p class="text-xs text-slate-500 italic mb-2">${q.latin}</p>` : '';
+    return `
+      <div class="bg-cream rounded-xl p-4 border border-slate-200">
+        ${latinText}
+        <p class="text-slate-700 mb-4 javanese text-lg">${q.kalimat.replace('___', `<span class="drop-zone-rumpang inline-block align-middle mx-1 px-1 py-1 bg-amber-100 border-2 border-dashed border-amber-400 rounded text-center font-600 min-w-[40px] h-[28px] flex items-center justify-center text-xs cursor-pointer" data-qi="${qi}"><span class="drop-zone-content javanese text-sm text-slate-400">?</span></span>`)}</p>
+        <div class="flex flex-wrap gap-2">
+          ${shuffled.map(o => `<span class="drag-item-rumpang bg-gold hover:bg-amber-500 border-2 border-gold rounded-lg px-4 py-2 text-sm font-600 text-white javanese text-base transition hover:shadow-md" draggable="true" data-qi="${qi}" data-answer="${o}">${o}</span>`).join('')}
+        </div>
+        <div class="mt-3 min-h-[24px]" id="rumpang-fb-${qi}"></div>
+      </div>`;
+  }).join('');
+  document.getElementById('rumpang-score').textContent = '';
+  window.currentRumpangQuestions = questions;
+  
+  // Attach event listeners setelah HTML dirender
+  setTimeout(() => {
+    document.querySelectorAll('.drag-item-rumpang').forEach(el => {
+      el.addEventListener('dragstart', dragStartRumpang);
+      el.addEventListener('touchstart', touchStartRumpang);
+      el.addEventListener('touchmove', touchMoveRumpang);
+      el.addEventListener('touchend', touchEndRumpang);
+    });
+    document.querySelectorAll('.drop-zone-rumpang').forEach(el => {
+      el.addEventListener('dragover', allowDropRumpang);
+      el.addEventListener('dragleave', dropLeaveRumpang);
+      el.addEventListener('drop', dropToRumpang);
+      el.addEventListener('touchenter', touchEnterDropZone);
+      el.addEventListener('touchleave', touchLeaveDropZone);
+    });
+  }, 0);
+}
+
+function dragStartRumpang(e) {
+  const answer = e.target.getAttribute('data-answer');
+  const qi = e.target.getAttribute('data-qi');
+  if(e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData('answer', answer);
+    e.dataTransfer.setData('qi', qi);
+  }
+}
+
+let touchDragData = {answer: null, qi: null, source: null};
+
+function touchStartRumpang(e) {
+  touchDragData.answer = e.target.getAttribute('data-answer');
+  touchDragData.qi = e.target.getAttribute('data-qi');
+  touchDragData.source = e.target;
+  e.target.style.opacity = '0.6';
+}
+
+function touchMoveRumpang(e) {
+  e.preventDefault();
+}
+
+function touchEndRumpang(e) {
+  if(touchDragData.source) touchDragData.source.style.opacity = '1';
+  
+  const touch = e.changedTouches[0];
+  const dropZoneEl = document.elementFromPoint(touch.clientX, touch.clientY);
+  const dropZone = dropZoneEl?.closest('.drop-zone-rumpang');
+  
+  if(dropZone && touchDragData.answer && touchDragData.qi !== null) {
+    handleDropRumpang(dropZone, touchDragData.answer, touchDragData.qi);
+  }
+  
+  touchDragData = {answer: null, qi: null, source: null};
+}
+
+function touchEnterDropZone(e) {
+  e.target.closest('.drop-zone-rumpang')?.classList.add('bg-blue-200', 'border-blue-500');
+}
+
+function touchLeaveDropZone(e) {
+  e.target.closest('.drop-zone-rumpang')?.classList.remove('bg-blue-200', 'border-blue-500');
+}
+
+function allowDropRumpang(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  e.target.closest('.drop-zone-rumpang')?.classList.add('bg-blue-200', 'border-blue-500');
+}
+
+function dropLeaveRumpang(e) {
+  e.target.closest('.drop-zone-rumpang')?.classList.remove('bg-blue-200', 'border-blue-500');
+}
+
+function dropToRumpang(e) {
+  e.preventDefault();
+  const answer = e.dataTransfer.getData('answer');
+  const qi = e.dataTransfer.getData('qi');
+  const dropZone = e.target.closest('.drop-zone-rumpang');
+  
+  if(!dropZone || !answer || qi === null) return;
+  dropZone.classList.remove('bg-blue-200', 'border-blue-500');
+  
+  handleDropRumpang(dropZone, answer, parseInt(qi));
+}
+
+function handleDropRumpang(dropZone, answer, qi) {
+  if(rumpangState[qi].placed) {
+    const oldSpan = document.createElement('span');
+    oldSpan.className = 'drag-item-rumpang bg-gold hover:bg-amber-500 border-2 border-gold rounded-lg px-4 py-2 text-sm font-600 text-white javanese text-base transition hover:shadow-md';
+    oldSpan.draggable = true;
+    oldSpan.setAttribute('data-answer', rumpangState[qi].placed);
+    oldSpan.setAttribute('data-qi', qi);
+    oldSpan.textContent = rumpangState[qi].placed;
+    oldSpan.addEventListener('dragstart', dragStartRumpang);
+    oldSpan.addEventListener('touchstart', touchStartRumpang);
+    oldSpan.addEventListener('touchmove', touchMoveRumpang);
+    oldSpan.addEventListener('touchend', touchEndRumpang);
+    const optionsContainer = dropZone.closest('.bg-cream').querySelector('.flex.flex-wrap');
+    if(optionsContainer) optionsContainer.appendChild(oldSpan);
+  }
+  
+  rumpangState[qi].placed = answer;
+  const contentSpan = dropZone.querySelector('.drop-zone-content');
+  contentSpan.textContent = answer;
+  contentSpan.classList.remove('text-slate-400');
+  contentSpan.classList.add('text-navy', 'font-700');
+  
+  const dragItem = document.querySelector(`[data-answer="${answer}"][data-qi="${qi}"]`);
+  if(dragItem) dragItem.remove();
+  
+  checkRumpangDropped(answer, qi);
+}
+
+function checkRumpangDropped(answer, qi) {
+  if(rumpangState[qi].answered) return;
+  rumpangState[qi].answered = true;
+  const question = window.currentRumpangQuestions[qi];
+  const fb = document.getElementById(`rumpang-fb-${qi}`);
+  const dropZone = document.querySelector(`[data-qi="${qi}"]`);
+  
+  // Deep normalization
+  const normalize = (str) => {
+    const normalized = String(str)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .normalize('NFC');
+    console.log('Normalisasi:', {
+      original: str,
+      hasil: normalized,
+      length: normalized.length,
+      bytes: new TextEncoder().encode(normalized)
+    });
+    return normalized;
+  };
+  
+  const normalizedAnswer = normalize(answer);
+  const normalizedCorrect = normalize(question.jawaban);
+  
+  console.log('=== HASIL PERBANDINGAN ===');
+  console.log('Jawaban dari siswa:', answer);
+  console.log('Jawaban benar:', question.jawaban);
+  console.log('Normalized jawaban siswa:', normalizedAnswer);
+  console.log('Normalized jawaban benar:', normalizedCorrect);
+  console.log('Sama?:', normalizedAnswer === normalizedCorrect);
+  console.log('========================');
+  
+  const isCorrect = normalizedAnswer === normalizedCorrect;
+  
+  if(isCorrect) {
+    rumpangState[qi].correct = true;
+    fb.innerHTML = '<span class="feedback-correct pulse-correct inline-block">✅ Benar!</span>';
+    dropZone.classList.add('border-green-500', 'bg-green-100', 'pulse-correct');
+    showMascotReaction('benar');
+  } else {
+    fb.innerHTML = `<span class="feedback-incorrect wiggle-no inline-block">❌ Salah. Jawaban: <span class="javanese">${question.jawaban}</span></span>`;
+    dropZone.classList.add('border-red-500', 'bg-red-100', 'wiggle-no');
+    showMascotReaction('salah');
+  }
+}
+
+function submitRumpang() {
+  const score = Object.values(rumpangState).filter(s => s.correct).length;
+  const total = window.currentRumpangQuestions.length;
+  document.getElementById('rumpang-score').innerHTML = `
+    <div class="bg-gradient-to-r from-gold to-amber-400 rounded-xl p-6 text-white jack-in-box shadow-xl">
+      <p class="text-sm font-600 mb-2 opacity-90">Hasil Kuis Anda</p>
+      <p class="text-5xl font-800 mb-2 heart-beat">${score}/${total}</p>
+      <p class="text-lg font-600">${Math.round((score/total)*100)}%</p>
+      ${score === total ? '<p class="text-sm mt-3 font-700 animate-bounce">🎉 Sempurna! Luar biasa!</p>' : score >= 7 ? '<p class="text-sm mt-3 font-700">👏 Bagus sekali!</p>' : '<p class="text-sm mt-3 font-700">💪 Tetap semangat!</p>'}
+    </div>`;
+  if(score === total) showMascotReaction('sempurna');
+  else if(score >= 7) showMascotReaction('bagus');
+  else showMascotReaction('coba lagi');
+  document.getElementById('rumpang-submit-btn').classList.add('hidden');
+  document.getElementById('rumpang-retry-btn').classList.remove('hidden');
+  document.getElementById('rumpang-questions').classList.add('opacity-50', 'pointer-events-none');
+}
+
+function renderCocokkan() {
+  const selected = [...cocokkanQuestionsAll].sort(() => Math.random() - 0.5).slice(0, 10);
+  cocokkanState = {pairs: selected, connections: {}, answered: 0, correct: 0, selected: selected};
+  const latinShuffled = [...selected].sort(() => Math.random() - 0.5);
+  
+  document.getElementById('cocokkan-jawa').innerHTML = selected.map((item, idx) => `
+    <div class="cocokkan-jawa-item bg-white border-2 border-navy rounded-lg p-3 my-2 text-base font-600 text-navy javanese text-2xl text-center" data-jawa-idx="${idx}" onclick="selectJawa(${idx})">${item.jawa}</div>
+  `).join('');
+  
+  document.getElementById('cocokkan-latin').innerHTML = latinShuffled.map((item) => {
+    const correctIdx = selected.findIndex(s => s.latin === item.latin);
+    return `<div class="cocokkan-latin-item bg-white border-2 border-gold rounded-lg p-3 my-2 text-base font-600 text-navy cursor-pointer" data-latin-idx="${correctIdx}" onclick="selectLatin(${correctIdx})">${item.latin}</div>`;
+  }).join('');
+  
+  document.getElementById('cocokkan-canvas').innerHTML = '';
+  document.getElementById('cocokkan-score').textContent = '';
+  window_selectedJawaIdx = null;
+}
+
+let window_selectedJawaIdx = null;
+
+function selectJawa(idx) {
+  document.querySelectorAll('.cocokkan-jawa-item').forEach(el => el.classList.remove('ring-4', 'ring-blue-400', 'bg-blue-100'));
+  if(window_selectedJawaIdx === idx) { window_selectedJawaIdx = null; }
+  else {
+    window_selectedJawaIdx = idx;
+    document.querySelector(`[data-jawa-idx="${idx}"]`).classList.add('ring-4', 'ring-blue-400', 'bg-blue-100');
+  }
+}
+
+function selectLatin(latinIdx) {
+  if(window_selectedJawaIdx === null) return;
+  const key = `${window_selectedJawaIdx}-${latinIdx}`;
+  if(cocokkanState.connections[key]) return;
+  
+  const jawaEl = document.querySelector(`[data-jawa-idx="${window_selectedJawaIdx}"]`);
+  const latinEl = document.querySelector(`[data-latin-idx="${latinIdx}"]`);
+  
+  cocokkanState.answered++;
+  cocokkanState.connections[key] = true;
+  const isCorrect = window_selectedJawaIdx === latinIdx;
+  if(isCorrect) cocokkanState.correct++;
+  
+  drawConnection(jawaEl, latinEl, isCorrect);
+  
+  if(isCorrect) {
+    jawaEl.classList.add('opacity-50', 'line-through', 'bg-green-100', 'border-green-500');
+    latinEl.classList.add('opacity-50', 'line-through', 'bg-green-100', 'border-green-500');
+  } else {
+    latinEl.classList.add('bg-red-100', 'border-red-500');
+    setTimeout(() => { latinEl.classList.remove('bg-red-100', 'border-red-500'); }, 1000);
+  }
+  jawaEl.classList.remove('ring-4', 'ring-blue-400', 'bg-blue-100');
+  window_selectedJawaIdx = null;
+}
+
+function submitCocokkan() {
+  const score = cocokkanState.correct;
+  const total = cocokkanState.selected.length;
+  document.getElementById('cocokkan-score').innerHTML = `
+    <div class="bg-gradient-to-r from-gold to-amber-400 rounded-xl p-6 text-white jack-in-box shadow-xl">
+      <p class="text-sm font-600 mb-2 opacity-90">Hasil Kuis Anda</p>
+      <p class="text-5xl font-800 mb-2 heart-beat">${score}/${total}</p>
+      <p class="text-lg font-600">${Math.round((score/total)*100)}%</p>
+      ${score === total ? '<p class="text-sm mt-3 font-700 animate-bounce">🎉 Sempurna! Luar biasa!</p>' : score >= 7 ? '<p class="text-sm mt-3 font-700">👏 Bagus sekali!</p>' : '<p class="text-sm mt-3 font-700">💪 Tetap semangat!</p>'}
+    </div>`;
+  if(score === total) showMascotReaction('sempurna');
+  else if(score >= 7) showMascotReaction('bagus');
+  else showMascotReaction('coba lagi');
+  document.getElementById('cocokkan-submit-btn').classList.add('hidden');
+  document.getElementById('cocokkan-retry-btn').classList.remove('hidden');
+  document.getElementById('cocokkan-container').classList.add('opacity-50', 'pointer-events-none');
+}
+
+function drawConnection(jawaEl, latinEl, isCorrect) {
+  const svg = document.getElementById('cocokkan-canvas');
+  const container = document.getElementById('cocokkan-container');
+  if(!svg.getAttribute('viewBox')) {
+    svg.setAttribute('viewBox', `0 0 ${container.offsetWidth} ${container.offsetHeight}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+  }
+  const jawaRect = jawaEl.getBoundingClientRect();
+  const latinRect = latinEl.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const x1 = jawaRect.right - containerRect.left;
+  const y1 = jawaRect.top - containerRect.top + jawaRect.height / 2;
+  const x2 = latinRect.left - containerRect.left;
+  const y2 = latinRect.top - containerRect.top + latinRect.height / 2;
+  const midX = (x1 + x2) / 2;
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M ${x1} ${y1} Q ${midX} ${(y1 + y2) / 2} ${x2} ${y2}`);
+  path.setAttribute('stroke', isCorrect ? '#16a34a' : '#dc2626');
+  path.setAttribute('stroke-width', '4');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(path);
+}
+
+function resetCocokkan() { 
+  window_selectedJawaIdx = null;
+  document.getElementById('cocokkan-score').textContent = '';
+  document.getElementById('cocokkan-submit-btn').classList.remove('hidden');
+  document.getElementById('cocokkan-retry-btn').classList.add('hidden');
+  document.getElementById('cocokkan-container').classList.remove('opacity-50', 'pointer-events-none');
+  renderCocokkan();
+}
+
+function resetRumpang() { 
+  rumpangState = {};
+  document.getElementById('rumpang-score').textContent = '';
+  document.getElementById('rumpang-submit-btn').classList.remove('hidden');
+  document.getElementById('rumpang-retry-btn').classList.add('hidden');
+  document.getElementById('rumpang-questions').classList.remove('opacity-50', 'pointer-events-none');
+  renderRumpang();
+}
+
+function startRumpangKuis() {
+  document.getElementById('kuis-menu').classList.add('hidden');
+  document.getElementById('kuis-rumpang-content').classList.remove('hidden');
+  renderRumpang();
+}
+
+function startCocokkanKuis() {
+  document.getElementById('kuis-menu').classList.add('hidden');
+  document.getElementById('kuis-cocokkan-content').classList.remove('hidden');
+  renderCocokkan();
+}
+
+function backToKuisMenu() {
+  document.getElementById('kuis-menu').classList.remove('hidden');
+  document.getElementById('kuis-rumpang-content').classList.add('hidden');
+  document.getElementById('kuis-cocokkan-content').classList.add('hidden');
+}
+
+let isDrawing = false, lastX = 0, lastY = 0, totalWritingAttempts = 0;
+
+function initCanvas() {
+  const canvas = document.getElementById('write-canvas');
+  canvas.width = canvas.offsetWidth;
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1e3a5f';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return [t.clientX - rect.left, t.clientY - rect.top];
+  }
+  canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); isDrawing = true; [lastX, lastY] = getPos(e); };
+  canvas.onmousemove = canvas.ontouchmove = (e) => {
+    if(!isDrawing) return; e.preventDefault();
+    const [x, y] = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+    [lastX, lastY] = [x, y];
+  };
+  canvas.onmouseup = canvas.ontouchend = () => { isDrawing = false; };
+}
+
+function clearCanvas() {
+  const canvas = document.getElementById('write-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('answer-reveal').classList.add('hidden');
+}
+
+function showAnswer() { document.getElementById('answer-reveal').classList.remove('hidden'); }
+
+const writingPromptsAll = [
+  {latin:'bapa',jawa:'ꦧꦥ'},{latin:'kana',jawa:'ꦏꦤ'},{latin:'rata',jawa:'ꦫꦠ'},{latin:'jaya',jawa:'ꦗꦪ'},{latin:'lawa',jawa:'ꦭꦮ'},
+  {latin:'masa',jawa:'ꦩꦱ'},{latin:'sapa',jawa:'ꦱꦥ'},{latin:'tapa',jawa:'ꦠꦥ'},{latin:'naga',jawa:'ꦤꦒ'},{latin:'rasa',jawa:'ꦫꦱ'},
+  {latin:'gara',jawa:'ꦒꦫ'},{latin:'dada',jawa:'ꦢꦢ'},{latin:'lala',jawa:'ꦭꦭ'},{latin:'sara',jawa:'ꦱꦫ'},{latin:'wasa',jawa:'ꦮꦱ'}
+];
+
+function nextWritingPrompt() {
+  totalWritingAttempts++;
+  const prompt = writingPromptsAll[Math.floor(Math.random() * writingPromptsAll.length)];
+  document.getElementById('prompt-word').textContent = prompt.latin;
+  document.getElementById('answer-aksara').textContent = prompt.jawa;
+  document.getElementById('soal-ke').textContent = totalWritingAttempts;
+  clearCanvas();
+  initCanvas();
+}
+
+function showMascotReaction(type) {
+  const mascot = document.getElementById('mascot');
+  const msg = document.getElementById('mascot-message');
+  const reactions = {
+    'benar': {emoji: '🦜', text: 'Bagus!', animation: 'char-bounce'},
+    'salah': {emoji: '🦜', text: 'Coba lagi!', animation: 'char-wave'},
+    'sempurna': {emoji: '🦜', text: 'Sempurna! 🌟', animation: 'char-dance'},
+    'bagus': {emoji: '🦜', text: 'Keren! 👍', animation: 'char-bounce'},
+    'coba lagi': {emoji: '🦜', text: 'Tetap coba!', animation: 'char-wave'}
+  };
+  const reaction = reactions[type] || reactions['benar'];
+  mascot.textContent = reaction.emoji;
+  mascot.className = `mascot ${reaction.animation}`;
+  msg.textContent = reaction.text;
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; mascot.className = 'mascot char-bounce'; }, 2500);
+}
+
+renderAksara();
+renderPasangan();
+renderSandhangan();
+renderRumpang();
+nextWritingPrompt();
+lucide.createIcons();
+
+const defaultConfig = {app_title: 'Belajar Aksara Jawa'};
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+  },
+  mapToCapabilities: (config) => ({recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined}),
+  mapToEditPanelValues: (config) => new Map([['app_title', config.app_title || defaultConfig.app_title]])
+});
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0de5368b42655d8',t:'MTc4MTgyNzk4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
